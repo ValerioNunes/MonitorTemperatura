@@ -44,6 +44,20 @@ public class ServicoMonitorTemp {
 		return tempDAO.getItemUltimo(local,"local");
 	}
 	@GET
+	@Path("getTest")
+	@Produces("application/json")
+	public Temperatura getTest()  {
+		// TODO Auto-generated method stub
+
+		Temperatura temp =  new Temperatura();
+		 temp.setId(99);
+		 temp.setLocal("ifma");
+		 temp.setTemperatura(12.3);
+		return temp;
+	}
+	
+	
+	@GET
 	@Path("getTodasTemperaturasLocal/{local}")
 	@Produces("application/json")
 	public List<Temperatura> getTodasTemperaturasLocal(@PathParam("local") String local) {
