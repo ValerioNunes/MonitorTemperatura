@@ -44,14 +44,13 @@ public class ServicoMonitorTemp {
 	@GET
 	@Path("getTest")
 	@Produces("application/json")
-	public String getTest()  {
+	public Temperatura getTest()  {
 		// TODO Auto-generated method stub
 
-//		Temperatura temp =  new Temperatura();
-//		 temp.setId(99);
-//		 temp.setLocal("ifma");
-//		 temp.setTemperatura(12.3);
-		return "temp";
+		Temperatura temp =  new Temperatura();
+		 temp.setLocal("ifma");
+		 temp.setTemperatura(12);
+		return temp;
 	}
 	
 	
