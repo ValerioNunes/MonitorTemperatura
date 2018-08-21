@@ -1,12 +1,10 @@
 package servico;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.Calendar;
-import java.util.Date;
+
 import java.util.List;
 
-import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
