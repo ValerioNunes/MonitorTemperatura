@@ -2,7 +2,7 @@ package servico;
 
 
 import java.util.Calendar;
-
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -48,7 +48,9 @@ public class ServicoMonitorTemp {
 		// TODO Auto-generated method stub
 
 		Temperatura temp =  new Temperatura();
+		 temp.setId(99);
 		 temp.setLocal("ifma");
+		 temp.setData(new Date());
 		 temp.setTemperatura(12);
 		return temp;
 	}
