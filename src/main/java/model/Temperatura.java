@@ -1,7 +1,7 @@
 package model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 
@@ -11,7 +11,7 @@ public class Temperatura  implements Serializable {
 	Integer id = 0;
 	double temperatura;
 	String local;
-	LocalDate data;
+	String data;
 
 	private static final long serialVersionUID = 1L;
 		
@@ -36,10 +36,13 @@ public class Temperatura  implements Serializable {
 	public void setLocal(String local) {
 		this.local = local;
 	}
-	public LocalDate getData() {
+
+	
+	
+	public String getData() {
 		return data;
 	}
-	public void setData(LocalDate data) {
+	public void setData(String data) {
 		this.data = data;
 	}
 	public static long getSerialversionuid() {

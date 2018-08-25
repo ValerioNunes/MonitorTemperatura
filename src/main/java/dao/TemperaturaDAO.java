@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -209,7 +210,7 @@ public class TemperaturaDAO {
 		                temp.setId(rs.getInt("id"));
 		                temp.setLocal(rs.getString("local"));
 		                LocalDate data = LocalDate.parse(rs.getString("data"));
-		                temp.setData(data);
+		                temp.setData(LocalDateTime.now().toString());
 		                temp.setTemperatura(rs.getDouble("temperatura"));
 		        obj.add(temp);
 		    }

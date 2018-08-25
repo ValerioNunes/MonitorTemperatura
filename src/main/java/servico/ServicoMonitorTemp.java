@@ -4,6 +4,7 @@ package servico;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class ServicoMonitorTemp{
 
 		Temperatura temp =  new Temperatura();
 		 temp.setLocal("minha casa");
-		 temp.setData(LocalDate.now());
+		 temp.setData(LocalDateTime.now().toString());
 		 temp.setTemperatura(12);
 		 
 
@@ -104,7 +105,7 @@ public class ServicoMonitorTemp{
 		
 		TemperaturaDAO tempDAO =  new TemperaturaDAO();
 		temperatura.setId(null);
-		temperatura.setData(LocalDate.now());
+		temperatura.setData(LocalDateTime.now().toString());
 		Temperatura obj =  tempDAO.Salvar(temperatura);
 		tempDAO.close();
 		
