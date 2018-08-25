@@ -15,12 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 
-
-
+import model.LocalView;
 import model.Temperatura;
 
 //http://localhost:8080/SampleApp-1.0/webservice/ServicoMonitorTemp/getTest
@@ -132,6 +133,25 @@ public class TemperaturaDAO {
 		
 	}
 
+	public boolean DeleteLocal(String local) {
+		
+		try{
+			
+	        String sql = "DELETE FROM  temperatura WHERE id > 0 and local like ?";
+	        
+	        try ( PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        
+	            pstmt.setString(1, local);
+	            pstmt.executeUpdate();
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        }
+			return true; 
+		}catch(Exception e){
+						
+			return false;
+		}
+	}
 	
 	public boolean Delete(int id) {
 		
@@ -153,12 +173,13 @@ public class TemperaturaDAO {
 		}
 	}
 
-	public List<String>  getLocaiCadastrados() {
+	public List<LocalView> getLocaiCadastrados() {
 		
-		ArrayList<String> results = new ArrayList();
+	    ArrayList<LocalView> results = new ArrayList<LocalView>(); 
+	
 		try{
 			
-			 String sql = "SELECT DISTINCT local from temperatura";   
+			 String sql = "SELECT local , avg(temperatura) as media from temperatura GROUP BY local";   
 			
 				try (
 				     Statement stmt  = conn.createStatement();
@@ -166,8 +187,10 @@ public class TemperaturaDAO {
 				    
 				    // loop through the result set
 				    while (rs.next()) {
-				    	
-				            results.add(rs.getString("local"));
+				    	 LocalView  lv = new LocalView();
+				    	 lv.setLocal(rs.getString("local"));
+				    	 lv.setTemperatura(rs.getDouble("media"));
+				         results.add(lv);
 				    }
 				} catch (SQLException e) {
 				    System.out.println(e.getMessage());

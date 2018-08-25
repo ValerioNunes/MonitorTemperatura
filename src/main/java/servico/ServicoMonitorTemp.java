@@ -5,8 +5,10 @@ package servico;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -25,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dao.TemperaturaDAO;
+import model.LocalView;
 import model.Periodo;
 import model.Temperatura;
 
@@ -58,7 +61,7 @@ public class ServicoMonitorTemp{
 		// TODO Auto-generated method stub
 
 		Temperatura temp =  new Temperatura();
-		 temp.setLocal("minha casa");
+		 temp.setLocal("maioba casa");
 		 temp.setData(LocalDateTime.now().toString());
 		 temp.setTemperatura(12);
 		 
@@ -84,6 +87,19 @@ public class ServicoMonitorTemp{
 		return obj;
 	}
 	
+	@GET
+	@Path("deleteTodasTemperaturasLocal/{local}")
+	@Produces("application/json")
+	public boolean deleteTodasTemperaturasLocal(@PathParam("local") String local) {
+		// TODO Auto-generated method stub
+		TemperaturaDAO tempDAO =  new TemperaturaDAO();
+		
+		boolean obj =  tempDAO.DeleteLocal(local);
+		 
+		tempDAO.close();
+		
+		return obj;
+	}
 	@POST
 	@Path("getTodasTemperaturasLocalPorData")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -118,7 +134,7 @@ public class ServicoMonitorTemp{
 	public Object getLocaisCadastrador() {
 		TemperaturaDAO tempDAO =  new TemperaturaDAO();
 		
-		Object obj = tempDAO.getLocaiCadastrados();
+		List<LocalView> obj = tempDAO.getLocaiCadastrados();
 		tempDAO.close();
 		
 		return obj;
