@@ -17,6 +17,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.Feature;
+import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -26,8 +28,7 @@ import model.Temperatura;
 
 
 @Path("/ServicoMonitorTemp")
-public class ServicoMonitorTemp implements ContainerResponseFilter {
-
+public class ServicoMonitorTemp{
 	/**
 	 * 
 	 */
@@ -131,15 +132,8 @@ public class ServicoMonitorTemp implements ContainerResponseFilter {
 	  return true;
 	  
   }
-@Override
 
-public void filter(final ContainerRequestContext requestContext,
-                   final ContainerResponseContext cres) throws IOException {
-   cres.getHeaders().add("Access-Control-Allow-Origin", "*");
-   cres.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
-   cres.getHeaders().add("Access-Control-Allow-Credentials", "true");
-   cres.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-   cres.getHeaders().add("Access-Control-Max-Age", "1209600");
-}
+
+
 
 }
