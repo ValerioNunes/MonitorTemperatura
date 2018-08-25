@@ -117,9 +117,9 @@ public class TemperaturaDAO {
 			        try ( PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			        
 			            pstmt.setString(1, obj.getLocal());
-			            pstmt.setString(2, obj.getData().toString());
+			            pstmt.setString(2, obj.getData());
 			            pstmt.setDouble(3, obj.getTemperatura());
-			            pstmt.setDouble(4, obj.getId());
+			            pstmt.setInt(4, obj.getId());
 			            pstmt.executeUpdate();
 			        } catch (SQLException e) {
 			            System.out.println(e.getMessage());
@@ -209,8 +209,7 @@ public class TemperaturaDAO {
 		        Temperatura temp = new  Temperatura();
 		                temp.setId(rs.getInt("id"));
 		                temp.setLocal(rs.getString("local"));
-		                LocalDate data = LocalDate.parse(rs.getString("data"));
-		                temp.setData(LocalDateTime.now().toString());
+		                temp.setData(rs.getString("data"));
 		                temp.setTemperatura(rs.getDouble("temperatura"));
 		        obj.add(temp);
 		    }
