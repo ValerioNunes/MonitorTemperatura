@@ -132,9 +132,14 @@ public class ServicoMonitorTemp implements ContainerResponseFilter {
 	  
   }
 @Override
-public void filter(ContainerRequestContext arg0, ContainerResponseContext arg1) throws IOException {
-	// TODO Auto-generated method stub
-	
+
+public void filter(final ContainerRequestContext requestContext,
+                   final ContainerResponseContext cres) throws IOException {
+   cres.getHeaders().add("Access-Control-Allow-Origin", "*");
+   cres.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
+   cres.getHeaders().add("Access-Control-Allow-Credentials", "true");
+   cres.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+   cres.getHeaders().add("Access-Control-Max-Age", "1209600");
 }
 
 }
