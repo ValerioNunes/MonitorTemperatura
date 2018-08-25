@@ -2,6 +2,7 @@ package servico;
 
 
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
@@ -13,7 +14,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import dao.TemperaturaDAO;
 import model.Periodo;
@@ -21,7 +26,7 @@ import model.Temperatura;
 
 
 @Path("/ServicoMonitorTemp")
-public class ServicoMonitorTemp {
+public class ServicoMonitorTemp implements ContainerResponseFilter {
 
 	/**
 	 * 
@@ -30,6 +35,7 @@ public class ServicoMonitorTemp {
 	
 	public ServicoMonitorTemp()  {
 		super();
+		
 		// TODO Auto-generated constructor stub
 	}
 	@GET
@@ -125,5 +131,10 @@ public class ServicoMonitorTemp {
 	  return true;
 	  
   }
+@Override
+public void filter(ContainerRequestContext arg0, ContainerResponseContext arg1) throws IOException {
+	// TODO Auto-generated method stub
+	
+}
 
 }

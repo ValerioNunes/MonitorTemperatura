@@ -27,6 +27,11 @@
 		    <artifactId>sqlite-jdbc</artifactId>
 		    <version>3.20.1</version>
 		</dependency>
+		<dependency>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>1.7</version>
+        </dependency>
     </dependencies>
 
 <profiles>
