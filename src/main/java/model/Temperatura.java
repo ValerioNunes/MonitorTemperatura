@@ -3,48 +3,27 @@ package model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 
-
-@Entity
 public class Temperatura  implements Serializable {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Integer id;
-	
+
+	Integer id = 0;
 	double temperatura;
 	String local;
-	
-	@Temporal(TemporalType.DATE)
-	java.util.Date data;
+	LocalDate data;
 
 	private static final long serialVersionUID = 1L;
 		
 	public Temperatura() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	
-	
 	public int getId() {
 		return id;
 	}
-
-
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-
-
 	public double getTemperatura() {
 		return temperatura;
 	}
@@ -57,11 +36,18 @@ public class Temperatura  implements Serializable {
 	public void setLocal(String local) {
 		this.local = local;
 	}
-	public java.util.Date getData() {
+	public LocalDate getData() {
 		return data;
 	}
-	public void setData(java.util.Date data) {
+	public void setData(LocalDate data) {
 		this.data = data;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	@Override
+	public String toString() {
+		return "Temperatura [id=" + id + ", temperatura=" + temperatura + ", local=" + local + ", data=" + data + "]";
 	}
 	
 	

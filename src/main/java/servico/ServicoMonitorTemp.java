@@ -1,8 +1,9 @@
 package servico;
 
 
+
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -48,10 +49,14 @@ public class ServicoMonitorTemp {
 		// TODO Auto-generated method stub
 
 		Temperatura temp =  new Temperatura();
-		 temp.setId(99);
-		 temp.setLocal("ifma");
-		 temp.setData(new Date());
+		 temp.setLocal("minha casa");
+		 temp.setData(LocalDate.now());
 		 temp.setTemperatura(12);
+		 
+
+		TemperaturaDAO tempDAO =  new TemperaturaDAO();
+		temp =  tempDAO.Salvar(temp);
+		tempDAO.close();
 		return temp;
 	}
 	
@@ -63,7 +68,11 @@ public class ServicoMonitorTemp {
 		// TODO Auto-generated method stub
 		TemperaturaDAO tempDAO =  new TemperaturaDAO();
 		
-		return  tempDAO.getItens(local, "local");
+		List<Temperatura> obj =  tempDAO.getItens(local, "local");
+		 
+		tempDAO.close();
+		
+		return obj;
 	}
 	
 	@POST
@@ -75,7 +84,10 @@ public class ServicoMonitorTemp {
 		System.out.println(" == == = == = = = ++ " + periodo);
 		TemperaturaDAO tempDAO =  new TemperaturaDAO();
 		
-		return   tempDAO.getItens(periodo.getLocal(),"local",periodo.getInicio(),periodo.getFim());
+		List<Temperatura>  obj= tempDAO.getItens(periodo.getLocal(),"local",periodo.getInicio(),periodo.getFim());
+		tempDAO.close();
+		
+		return obj;
 	}
 	@POST
 	@Path("salvarTemperaturas")
@@ -84,26 +96,32 @@ public class ServicoMonitorTemp {
 	public Temperatura salvarTemperaturas(Temperatura temperatura)  {
 		
 		TemperaturaDAO tempDAO =  new TemperaturaDAO();
-		java.util.Date data = Calendar.getInstance().getTime();
-		temperatura.setData(data);
 		temperatura.setId(null);
-		return tempDAO.Salvar(temperatura);
+		temperatura.setData(LocalDate.now());
+		Temperatura obj =  tempDAO.Salvar(temperatura);
+		tempDAO.close();
 		
+		return obj;
 	}
 	@GET
 	@Path("getLocaisCadastrado")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Object getLocaisCadastrador() {
 		TemperaturaDAO tempDAO =  new TemperaturaDAO();
-		return tempDAO.getLocaiCadastrados();
+		
+		Object obj = tempDAO.getLocaiCadastrados();
+		tempDAO.close();
+		
+		return obj;
 	}
   @DELETE
   @Path("deleteTemp/{id}")
   public boolean deleteTemp(@PathParam("id") int id) {
 	  TemperaturaDAO tempDAO =  new TemperaturaDAO();
 
-	  tempDAO.Delete(tempDAO.getItens(id));
+	  tempDAO.Delete(id);
 	  
+	  tempDAO.close();
 	  return true;
 	  
   }

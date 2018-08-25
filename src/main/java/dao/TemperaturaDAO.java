@@ -1,123 +1,237 @@
 package dao;
 
-import java.awt.Component;
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.swing.JOptionPane;
-import javax.transaction.Transactional;
+import org.w3c.dom.Document;
 
-import database.JPA;
+
+
 import model.Temperatura;
 
+//http://localhost:8080/SampleApp-1.0/webservice/ServicoMonitorTemp/getTest
+
 public class TemperaturaDAO {
-    EntityManager em;
+	
+	 static Connection conn = null;
+	 public static void connect() {
+	       
+	        try {
+	            // db parameters
+	        	try {
+	        	
+					Class.forName("org.sqlite.JDBC");
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+				       
+					e.printStackTrace();
+				}
+
+	            String url = "jdbc:sqlite::resource:monitortemp.db";
+	            // create a connection to the database
+	            conn = DriverManager.getConnection(url);
+	            
+	            System.out.println("Connection to SQLite has been established.");
+	            
+	        } catch (SQLException e) {
+	            System.out.println( e.getClass().getName() + ": " + e.getMessage());
+	        }
+
+	    }
+	
+	public static void close() {
+        try {
+            if (conn != null) {
+                conn.close();
+                System.out.println("Connection to SQLite has closed.");
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+	}
 	
 	public TemperaturaDAO() {
 		super();
-		this.em = JPA.em();
+		connect();
+	
 	}
-	@Transactional
+
+	
 	public Temperatura Salvar(Object object) {
 		// TODO Auto-generated method stub
 		Temperatura obj =  (Temperatura) object;
-				try{	
-							em.getTransaction().begin();
-							em.persist(obj);
-							em.getTransaction().commit();
-				}
-				finally{
-					if(em != null){
-						em.close();
-						}
-					}
-				return obj;
-	}
+		
+	        String sql = "INSERT INTO temperatura (local,data,temperatura) VALUES(?,?,?)";
+	        
+	        try ( PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        
+	            pstmt.setString(1, obj.getLocal());
+	            pstmt.setString(2, obj.getData().toString());
+	            pstmt.setDouble(3, obj.getTemperatura());
+	            
+	            int affectedRows = pstmt.executeUpdate();
 
+	            if (affectedRows == 0) {
+	                throw new SQLException("Creating user failed, no rows affected.");
+	            }
+
+	            try (ResultSet generatedKeys =  pstmt.getGeneratedKeys()) {
+	                if (generatedKeys.next()) {
+	                    obj.setId(generatedKeys.getInt(1));
+	                }
+	                else {
+	                    throw new SQLException("Creating user failed, no ID obtained.");
+	                }
+	            }
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        }
+	       
+		return obj;
+	}
+	
 	
 	public void Update(Object object) {
 		// TODO Auto-generated method stub
 		
-		Temperatura o = (Temperatura) object;
+		Temperatura obj = (Temperatura) object;
 		try{	
-					em.getTransaction().begin();
-					em.merge(o);
-					em.getTransaction().commit();
-					//JOptionPane.showMessageDialog(null, "\tAlterado com Sucesso !!!");
+				if(obj.getId() !=  0) {					
+			        String sql = "UPDATE temperatura SET local = ? ,data = ? ,temperatura = ? WHERE id = ?";
+			        
+			        try ( PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			        
+			            pstmt.setString(1, obj.getLocal());
+			            pstmt.setString(2, obj.getData().toString());
+			            pstmt.setDouble(3, obj.getTemperatura());
+			            pstmt.setDouble(4, obj.getId());
+			            pstmt.executeUpdate();
+			        } catch (SQLException e) {
+			            System.out.println(e.getMessage());
+		        }
+			}
+	        
 		}catch(Exception e){
-			 JOptionPane.showMessageDialog(null, "\tFalha  ao Alterar  " + e);
+			 
 		}
-		finally{
-			if(em != null)
-				em.close();
-		}
+		
 	}
 
 	
-	public void Delete(Object object) {
+	public boolean Delete(int id) {
 		
-		Temperatura o = (Temperatura) object;
 		try{
-					em.getTransaction().begin();
-					o= em.merge(o);
-					em.flush();
-					em.remove(o);
-					em.getTransaction().commit();
+			
+	        String sql = "DELETE FROM  temperatura WHERE id = ?";
+	        
+	        try ( PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        
+	            pstmt.setInt(1, id);
+	            pstmt.executeUpdate();
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        }
+			return true; 
 		}catch(Exception e){
-			System.out.println(e.getMessage());
+						
+			return false;
 		}
 	}
 
-	public List  getLocaiCadastrados() {
-		List results = null;
+	public List<String>  getLocaiCadastrados() {
+		
+		ArrayList<String> results = new ArrayList();
 		try{
 			
-			String hql = "SELECT distinct T.local FROM Temperatura T";
-			Query query = em.createQuery(hql);
-			results =  query.getResultList();
-		
+			 String sql = "SELECT DISTINCT local from temperatura";   
+			
+				try (
+				     Statement stmt  = conn.createStatement();
+				     ResultSet rs    = stmt.executeQuery(sql)){
+				    
+				    // loop through the result set
+				    while (rs.next()) {
+				    	
+				            results.add(rs.getString("local"));
+				    }
+				} catch (SQLException e) {
+				    System.out.println(e.getMessage());
+				}
+				
+				
 		}catch(Exception e){
 		}
 		finally{
-			if(em != null)
-				em.close();	
+			
 		}
 		
 		return results;
 	}
 	public List<Temperatura> getItens(){
 		
-		List<Temperatura> obj    = null;
+		ArrayList<Temperatura> obj    =   new ArrayList<Temperatura>();
 		
 		try{
-			 obj = em.createQuery("FROM Temperatura", Temperatura.class).getResultList();
-		
+			
+			 String sql = "SELECT id, local,data,temperatura  FROM temperatura";   
+		     obj = cmdSQL(sql);
+			
 		}catch(Exception e){
-			 JOptionPane.showMessageDialog(null, "\tBuscar Objeto : " + e);
 		}
-		finally{
-			if(em != null)
-				em.close();	
-		}
-		
+	
 		return obj;
 	}
-	
+
+	private ArrayList<Temperatura> cmdSQL( String sql) {
+		ArrayList<Temperatura> obj =   new ArrayList<Temperatura>();
+		try (
+		     Statement stmt  = conn.createStatement();
+		     ResultSet rs    = stmt.executeQuery(sql)){
+		    
+		    // loop through the result set
+		    while (rs.next()) {
+		    	
+		        Temperatura temp = new  Temperatura();
+		                temp.setId(rs.getInt("id"));
+		                temp.setLocal(rs.getString("local"));
+		                LocalDate data = LocalDate.parse(rs.getString("data"));
+		                temp.setData(data);
+		                temp.setTemperatura(rs.getDouble("temperatura"));
+		        obj.add(temp);
+		    }
+		} catch (SQLException e) {
+		    System.out.println(e.getMessage());
+		}
+			return obj;
+		
+
+	}
+
 	public List<Temperatura> getItens(String nome, String coluna){
 		
 		List<Temperatura> obj    = null;
 		
 		try{
-			 obj = em.createQuery("FROM Temperatura where "+coluna+" like :nome", Temperatura.class).setParameter("nome","%"+ nome +"%").getResultList();
-		
+			 String sql = "SELECT id, local,data,temperatura FROM temperatura where "+coluna+" LIKE '"+ nome +"' order by data desc";   
+		     obj = cmdSQL(sql);	
+			
 		}
-		finally{
-			if(em != null)
-				em.close();	
+		catch(Exception e) {
+			
 		}
 		
 		return obj;
@@ -128,34 +242,21 @@ public class TemperaturaDAO {
 		Temperatura obj    = null;
 		
 		try{
-			 obj = em.createQuery("FROM Temperatura where "+coluna+" like :nome  ORDER BY id DESC", Temperatura.class).setParameter("nome","%"+ nome +"%").setMaxResults(1).getSingleResult();
-		
+			
+			
 		}
 		finally{
-			if(em != null)
-				em.close();	
-		}
+				}
 		
 		return obj;
 	}
 	public List<Temperatura> getItens(String nome, String coluna,Date startDate, Date endDate ){
-		
-		List<Temperatura> obj    = null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		String frmDate = format.format(startDate);
-		String enDate = format.format(endDate);
-		System.out.println(frmDate+ " "+ enDate);
+		List<Temperatura> obj = null;
 		try{
-			 obj = em.createQuery("FROM Temperatura T where T."+coluna+" like :nome AND  T.data  BETWEEN :stDate AND :edDate", Temperatura.class)
-					 .setParameter("stDate", startDate)
-					 .setParameter("edDate", endDate)
-					 .setParameter("nome","%"+ nome +"%")
-					 .getResultList();
-		
+			 String sql = "SELECT id, local,data,temperatura FROM temperatura where "+coluna+" LIKE '"+ nome +"' and date(data) > '"+startDate.toString()+"'  and  date(data) < '"+ endDate.toString()+"'";   
+			 obj = cmdSQL(sql);	
 		}
 		finally{
-			if(em != null)
-				em.close();	
 		}
 		
 		return obj;
@@ -163,16 +264,18 @@ public class TemperaturaDAO {
 	
 	public Temperatura getItens(int id){
 		
-		Temperatura obj    = null;
+		
+		List<Temperatura> obj    = null;
 		
 		try{
-			 obj = em.createQuery("FROM Temperatura where id = :id", Temperatura.class).setParameter("id",id).getSingleResult();
-		
-		}finally{
+			 String sql = "SELECT id, local,data,temperatura FROM temperatura where id = " + id;   
+		     obj = cmdSQL(sql);	
+			
+		}
+		catch(Exception e) {
 			
 		}
 		
-		return obj;
+		return obj.get(0);
 	}
-	
 }
